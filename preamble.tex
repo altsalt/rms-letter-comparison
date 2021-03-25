@@ -1,0 +1,69 @@
+\PassOptionsToPackage{breaklinks}{hyperref}
+\PassOptionsToPackage{dvipsnames}{xcolor}
+
+\usepackage[american]{babel}
+%\usepackage[style=apa,backend=biber,natbib=true]{biblatex}
+%\DeclareLanguageMapping{american}{american-apa}
+% break on URL numbers
+%\setcounter{biburlnumpenalty}{9000}
+% break on URL lower case letters
+%\setcounter{biburllcpenalty}{9000}
+% break on URL UPPER CASE letters
+%\setcounter{biburlucpenalty}{9000}
+%\addbibresource{thesis/paper/resources/refs.bib}
+
+\usepackage{CormorantGaramond}
+%\usepackage{ebgaramond}
+\usepackage[english=american]{csquotes}
+\usepackage{textcomp} % provide euro and other symbols
+
+%\usepackage{wrapfig}
+%\usepackage{rotating} % re-enable if continuing down the xtable madness hole
+
+% packages used in essentially every document
+%\usepackage{graphicx} % loaded by apa7 template
+%\usepackage{enumerate}
+
+% packages used in many documents but left off by default
+\usepackage{amsmath, amsthm, amssymb}
+%\usepackage{relsize}
+% \usepackage{dcolumn}
+% \usepackage{endfloat}
+%\usepackage{etoolbox} % loaded by apa7 template
+%\usepackage{booktabs} % loaded by apa7 template
+%\usepackage{array} % loaded by apa7 template
+%\usepackage{colortbl}
+%\usepackage{pdflscape} % needed for kableExtra, despite not working in Overleaf
+%\usepackage{makecell}
+
+
+\usepackage[english,american]{varioref} % hyperref loaded by apa7, so this may need to be preloaded
+% TODO: comment out before APA7 submission
+%% changes "on the facing page" to "on the next page"
+%\makeatletter\@twosidefalse\@mparswitchfalse\makeatother 
+%\usepackage[breaklinks]{hyperref} % loaded by apa7 template, breaklinks patched at top
+\hypersetup{
+  hidelinks,
+  colorlinks=true,
+  linkcolor=black,
+  citecolor=black,
+  filecolor=blue,
+  urlcolor=blue,
+  unicode=true,
+  pdftitle={GitHub Petitions Regarding Removal of RMS: Contributor Comparison},
+  pdfauthor={Wm Salt Hale},
+  pdfcreator={LaTeX via XeTeX}}
+%\urlstyle{same} % disable monospaced font for URLs... maybe?
+%\usepackage[capitalize,noabbrev]{cleveref} % maybe try this later... the idea is that you can automagically expand \cref{fig:1} to Figure 1
+
+
+% apply labels to specific text rather than sections/blocks
+%% https://tex.stackexchange.com/questions/230149/label-a-word-or-sentence
+\makeatletter
+\newcommand{\labelText}[2]{%
+  \phantomsection
+  #1\def\@currentlabel{\unexpanded{#1}}\label{#2}%
+}
+\makeatother
+
+

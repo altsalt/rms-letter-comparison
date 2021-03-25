@@ -1,0 +1,178 @@
+---
+title: "GitHub Petitions Regarding Removal of RMS: Contributor Comparison"
+author: "Wm Salt Hale  \n<www.altsalt.net>"
+date: "March 25, 2021"
+lang: en-US
+fontsize: 12pt
+# documentclass: article
+# classoption: oneside
+# geometry: margin=1in
+# linkcolor: black
+# urlcolor: blue
+# citecolor: black
+output:
+  bookdown::pdf_document2:
+    toc: false
+#    toc: true
+#    toc_depth: 2
+#    number_sections: true
+#    fig_caption: yes
+    fig_width: 6
+    fig_height: 4
+    latex_engine: xelatex
+    keep_tex: true
+    citation_package: biblatex
+    includes:
+      in_header: preamble.tex
+#bibliography: resources/refs.bib
+biblio-style: apa
+biblatexoptions: [backend=biber,natbib=true]
+link-citations: yes
+editor_options:
+  chunk_output_type: console
+---
+
+```{r Global, include=FALSE, echo=FALSE, message=FALSE, warnings=FALSE}
+# Clean Workspace
+rm(list = ls())
+
+# Global Options
+knitr::opts_chunk$set(echo=FALSE, error=FALSE, message=FALSE, warning=FALSE)
+
+# Global Variables
+gen_plots_toggle <- FALSE
+
+```
+
+```{r Libraries, include=FALSE}
+# Load Libraries
+required_pkgs <- c("here", "RColorBrewer", "tidyverse", "scales",
+                   "knitr", "bookdown", "kableExtra")
+installed_pkgs <- installed.packages()
+sapply(required_pkgs, function(p) {
+  if(!p %in% installed_pkgs[,1]) {
+    install.packages(p)
+  }
+})
+# https://stackoverflow.com/questions/8175912/load-multiple-packages-at-once/8176099#8176099
+lapply(required_pkgs, require, character.only = TRUE)
+
+here::i_am('rms-letter-comparison.Rmd')
+here()
+
+```
+
+```{r Helper Functions, include=FALSE}
+# Helper Functions
+source(here('code', '99_helpers.R'))
+
+```
+
+On March 22, 2021 the former president of the Free Software Foundation (FSF) Richard M. Stallman (rms) announced that he would be returning to the FSF board.\footnote{\url{https://twitter.com/nixcraft/status/1373905399707955202}} This comes 18 months after he stepped down, due to public pressure regarding, among other things, statements relating to the involvement of Marvin Minsky and Jeffrey Epstein.\footnote{\url{https://itsfoss.com/richard-stallman-controversy}}
+
+On March 23, 2021 a letter was published online calling for the removal of rms from all leadership positions within the Free/Libre/Open Source Software community.\footnote{\url{https://rms-open-letter.github.io/}} Shortly thereafter, a counter letter, in support of the return of rms was published.\footnote{\url{https://rms-support-letter.github.io/}}
+
+Each of these letters called for readers to add their signatures via a pull request (PR) using GitHub, one of the largest hosts for FLOSS projects. As of 10:00:00 UTC on March 25, 2021, the letter requesting removal has received over 2,000 signatures, while the letter in support of remaining has received just over 1,400.
+
+Below is a cursory analysis comparing contributors to each letter. The data used was acquired from GitHub via thier official API, accessed using the PyGithub library.\footnote{\url{https://github.com/PyGithub/PyGithub}} It was then processed in R, making use of tools from the tidyverse library.\footnote{\url{https://www.tidyverse.org/}}
+
+The documentation provided for this project is released under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0) https://creativecommons.org/licenses/by-sa/4.0/. The code provided for this project is released under the GNU General Public License version 3 (GNU GPLv3) https://www.gnu.org/licenses/gpl-3.0. The data was collected from GitHub. All data provided for this project is subject to the terms outlined on this page: https://docs.github.com/en/github/site-policy/github-terms-of-service
+
+
+
+```{r Load Data, include=FALSE}
+# Load Data
+df <- readRDS(here('data', 'dataset.Rds'))
+df_facts <- readRDS(here('data', 'facts.Rds'))
+#df_tables <- readRDS(here('data', 'tables.Rds'))
+df_tables <- list()
+
+```
+
+```{r}
+# Generate facts table
+rr_column <- c(df_facts$orig_rr_signers, df_facts$rr_percentage_with_name,
+               df_facts$rr_percentage_with_bio, df_facts$rr_percentage_with_email,
+               df_facts$rr_percentage_with_blog, df_facts$rr_percentage_with_twitter,
+               df_facts$rr_percentage_with_company, df_facts$rr_unique_companies,
+               df_facts$rr_mean_account_age, df_facts$rr_median_account_age,
+               df_facts$rr_mean_public_repos, df_facts$rr_median_public_repos,
+               df_facts$rr_mean_public_gists, df_facts$rr_median_public_gists,
+               df_facts$rr_mean_followers, df_facts$rr_median_followers,
+               df_facts$rr_mean_following, df_facts$rr_median_following)
+
+sr_column <- c(df_facts$orig_sr_signers, df_facts$sr_percentage_with_name,
+               df_facts$sr_percentage_with_bio, df_facts$sr_percentage_with_email,
+               df_facts$sr_percentage_with_blog, df_facts$sr_percentage_with_twitter,
+               df_facts$sr_percentage_with_company, df_facts$sr_unique_companies,
+               df_facts$sr_mean_account_age, df_facts$sr_median_account_age,
+               df_facts$sr_mean_public_repos, df_facts$sr_median_public_repos,
+               df_facts$sr_mean_public_gists, df_facts$sr_median_public_gists,
+               df_facts$sr_mean_followers, df_facts$sr_median_followers,
+               df_facts$sr_mean_following, df_facts$sr_median_following)
+
+total_column <- c(df_facts$orig_total_signers, df_facts$total_percentage_with_name,
+                  df_facts$total_percentage_with_bio, df_facts$total_percentage_with_email,
+                  df_facts$total_percentage_with_blog, df_facts$total_percentage_with_twitter,
+                  df_facts$total_percentage_with_company, df_facts$total_unique_companies,
+                  df_facts$total_mean_account_age, df_facts$total_median_account_age,
+                  df_facts$total_mean_public_repos, df_facts$total_median_public_repos,
+                  df_facts$total_mean_public_gists, df_facts$total_median_public_gists,
+                  df_facts$total_mean_followers, df_facts$total_median_followers,
+                  df_facts$total_mean_following, df_facts$total_median_following)
+
+facts_table <- data.frame(rr_column, sr_column, total_column)
+names(facts_table) <- c('Reject rms', 'Support rms', 'Total')
+rownames(facts_table) <- c('Number of Signers', 'Percentage with Name',
+                           'Percentage with Bio', 'Percentage with Email',
+                           'Percentage with Blog', 'Percentage with Twitter',
+                           'Percentage with Company', 'Total Unique Companies',
+                           'Mean Account Age (in weeks)', 'Median Account Age (in weeks)',
+                           'Mean Public Repos', 'Median Public Repos',
+                           'Mean Public Gists', 'Median Public Gists',
+                           'Mean Followers', 'Median Followers',
+                           'Mean Following', 'Median Following')
+```
+
+```{r factstable, results='asis'}
+df_tables$facts_table <- round(facts_table, digits=2) %>%
+  kbl(booktabs=TRUE, escape=TRUE, caption='User data of contributors on GitHub to letters calling for the removal or support of, Richard M. Stallman, respectively.') %>%
+  kable_styling(latex_options=c('striped'))
+
+print(df_tables$facts_table)
+```
+
+```{r}
+# Format facts table for plotting
+#facts_table_orig <- facts_table
+facts_table$Total <- NULL
+facts_table <- rownames_to_column(facts_table, 'metric')
+facts_table$metric <- factor(facts_table$metric, levels=facts_table$metric)
+
+facts_table <- facts_table %>%
+  pivot_longer(!'metric', names_to='letter', values_to='observation')
+
+# Plot facts table
+gg <- ggplot(facts_table, aes(x=metric, y=observation)) +
+  geom_bar(aes(fill=letter), stat='identity', position='fill') +
+  geom_hline(yintercept=0.5) +
+  theme_bw() +
+  theme(axis.text.x = element_text(angle=-40, hjust=.1)) +
+  labs(fill='Letter to:',
+       x=element_blank(),
+       y=element_blank()) +
+  coord_flip() +
+  scale_x_discrete(limits = rev(levels(facts_table$metric))) +
+  scale_y_continuous(labels = percent)
+```
+
+```{r factsbarplot, results='asis'}
+print(gg)
+```
+
+
+```{r}
+#saveRDS(df, file=here('data', 'dataset.Rds'))
+#saveRDS(df_facts, file=here('data', 'facts.Rds'))
+#saveRDS(df_tables, file=here('data', 'tables.Rds'))
+```
