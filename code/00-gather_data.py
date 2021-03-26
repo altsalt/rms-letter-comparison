@@ -16,68 +16,100 @@ import time
 from pprint import pprint
 
 token = os.getenv('GITHUB_TOKEN')
-g = Github(token)
+gh = Github(token)
 
-reject_rms_repo = g.get_repo("rms-open-letter/rms-open-letter.github.io")
-support_rms_repo = g.get_repo("rms-support-letter/rms-support-letter.github.io")
+reject_rms_repo = gh.get_repo("rms-open-letter/rms-open-letter.github.io")
+support_rms_repo = gh.get_repo("rms-support-letter/rms-support-letter.github.io")
 rr = reject_rms_repo
 sr = support_rms_repo
 
-rr_users = rr.get_contributors()
-sr_users = sr.get_contributors()
+# Q: Why am I only getting ~500 users back per list?
+## A: It seems as though the documentation is poor and all of the additional ones return as anonymous
+## https://stackoverflow.com/questions/36410357/github-v3-api-list-contributors
+rr_users = rr.get_contributors(anon=1)
+sr_users = sr.get_contributors(anon=1)
 
 d = []
 
 def get_user_info(user, repo):
-  time.sleep(1)
-  if(g.rate_limiting[0] < 10):
-    time.sleep(10)
+  utype = user.type
+  if(utype == 'Anonymous'):
+    if(user.email != ''):
+      queried_users = gh.search_users(user.email)
+
+    if((user.email == '') or (queried_users.totalCount == 0)):
+      if(user.name != ''):
+        queried_users = gh.search_users(user.name + ' in:name')
+
+      if((user.name == '') or (queried_users.totalCount == 0)):
+        info = {
+          'Name': user.name,
+          'Email': user.email,
+          'Contributions': user.contributions,
+          'Type': 'Anonymous',
+          'Repo': repo
+        }
+        return(info)
+
+    if(queried_users.totalCount > 1):
+      info = {
+        'Name': user.name,
+        'Email': user.email,
+        'Contributions': user.contributions,
+        'Type': 'Multiple',
+        'Repo': repo
+      }
+      return(info)
+    else:
+      user = queried_users.get_page(0)[0]
+      utype = 'Queried'
+
   info = {
-    'ID': u.id,
-    'NodeID': u.node_id,
-    'Username': u.login,
-    'Name': u.name,
-    'Avatar': u.avatar_url,
-    'Bio': u.bio,
-    'Email': u.email,
-    'Location': u.location,
-    'Blog': u.blog,
-    'Company': u.company,
-    'Hireable': u.hireable,
-    'Twitter': u.twitter_username,
-    'Collaborators': u.collaborators,
-    'Contributions': u.contributions,
-    'Followers': u.followers,
-    'Following': u.following,
-    'Gravatar': u.gravatar_id,
-    'Hireable': u.hireable,
-    'Created': u.created_at,
-    'Updated': u.updated_at,
-    'Suspended': u.suspended_at,
-    'Inviter': u.inviter,
-    'PrivateGists': u.private_gists,
-    'PublicGists': u.public_gists,
-    'PublicRepos': u.public_repos,
-    'PrivateRepos': u.total_private_repos,
-    'OwnedPrivateRepos': u.owned_private_repos,
-    'Plan': u.plan,
-    'Role': u.role,
-    'TeamCount': u.team_count,
-    'Type': u.type,
-    'SiteAdmin': u.site_admin,
-    'DiskUsage': u.disk_usage,
-    'URL': u.url,
-    'FollowersURL': u.followers_url,
-    'FollowingURL': u.following_url,
-    'ReposURL': u.repos_url,
-    'StarredURL': u.starred_url,
-    'GistsURL': u.gists_url,
-    'htmlURL': u.html_url,
-    'EventsURL': u.events_url,
-    'OrganizationsURL': u.organizations_url,
-    'InvitationTeamsURL': u.invitation_teams_url,
-    'ReceivedEventsURL': u.received_events_url,
-    'SubscriptionsURL': u.subscriptions_url,
+    'ID': user.id,
+    'NodeID': user.node_id,
+    'Username': user.login,
+    'Name': user.name,
+    'Avatar': user.avatar_url,
+    'Bio': user.bio,
+    'Email': user.email,
+    'Location': user.location,
+    'Blog': user.blog,
+    'Company': user.company,
+    'Hireable': user.hireable,
+    'Twitter': user.twitter_username,
+    'Collaborators': user.collaborators,
+    'Contributions': user.contributions,
+    'Followers': user.followers,
+    'Following': user.following,
+    'Gravatar': user.gravatar_id,
+    'Hireable': user.hireable,
+    'Created': user.created_at,
+    'Updated': user.updated_at,
+    'Suspended': user.suspended_at,
+    'Inviter': user.inviter,
+    'PrivateGists': user.private_gists,
+    'PublicGists': user.public_gists,
+    'PublicRepos': user.public_repos,
+    'PrivateRepos': user.total_private_repos,
+    'OwnedPrivateRepos': user.owned_private_repos,
+    'Plan': user.plan,
+    'Role': user.role,
+    'TeamCount': user.team_count,
+    'Type': utype,
+    'SiteAdmin': user.site_admin,
+    'DiskUsage': user.disk_usage,
+    'URL': user.url,
+    'FollowersURL': user.followers_url,
+    'FollowingURL': user.following_url,
+    'ReposURL': user.repos_url,
+    'StarredURL': user.starred_url,
+    'GistsURL': user.gists_url,
+    'htmlURL': user.html_url,
+    'EventsURL': user.events_url,
+    'OrganizationsURL': user.organizations_url,
+    'InvitationTeamsURL': user.invitation_teams_url,
+    'ReceivedEventsURL': user.received_events_url,
+    'SubscriptionsURL': user.subscriptions_url,
     'Repo': repo
   }
   return(info)
