@@ -39,116 +39,72 @@ def get_user_info(user, repo):
   if(utype == 'Anonymous'):
     if(user.email != ''):
       queried_users = gh.search_users(user.email)
-
-    if((user.email == '') or (queried_users.totalCount == 0)):
-      if(user.name != ''):
-        queried_users = gh.search_users(user.name + ' in:name')
-
-      if((user.name == '') or (queried_users.totalCount == 0)):
-        info = {
-          'ID': '',
-          'NodeID': '',
-          'Username': '',
-          'Name': user.name,
-          'Avatar': '',
-          'Bio': '',
-          'Email': user.email,
-          'Location': '',
-          'Blog': '',
-          'Company': '',
-          'Hireable': '',
-          'Twitter': '',
-          'Collaborators': '',
-          'Contributions': user.contributions,
-          'Followers': '',
-          'Following': '',
-          'Gravatar': '',
-          'Hireable': '',
-          'Created': '',
-          'Updated': '',
-          'Suspended': '',
-          'Inviter': '',
-          'PrivateGists': '',
-          'PublicGists': '',
-          'PublicRepos': '',
-          'PrivateRepos': '',
-          'OwnedPrivateRepos': '',
-          'Plan': '',
-          'Role': '',
-          'TeamCount': '',
-          'Type': 'Anonymous',
-          'SiteAdmin': '',
-          'DiskUsage': '',
-          'URL': '',
-          'FollowersURL': '',
-          'FollowingURL': '',
-          'ReposURL': '',
-          'StarredURL': '',
-          'GistsURL': '',
-          'htmlURL': '',
-          'EventsURL': '',
-          'OrganizationsURL': '',
-          'InvitationTeamsURL': '',
-          'ReceivedEventsURL': '',
-          'SubscriptionsURL': '',
-          'Repo': repo
-        }
-        return(info)
-
-    if(queried_users.totalCount > 1):
-      info = {
-        'ID': '',
-        'NodeID': '',
-        'Username': '',
-        'Name': user.name,
-        'Avatar': '',
-        'Bio': '',
-        'Email': user.email,
-        'Location': '',
-        'Blog': '',
-        'Company': '',
-        'Hireable': '',
-        'Twitter': '',
-        'Collaborators': '',
-        'Contributions': user.contributions,
-        'Followers': '',
-        'Following': '',
-        'Gravatar': '',
-        'Hireable': '',
-        'Created': '',
-        'Updated': '',
-        'Suspended': '',
-        'Inviter': '',
-        'PrivateGists': '',
-        'PublicGists': '',
-        'PublicRepos': '',
-        'PrivateRepos': '',
-        'OwnedPrivateRepos': '',
-        'Plan': '',
-        'Role': '',
-        'TeamCount': '',
-        'Type': 'Multiple',
-        'SiteAdmin': '',
-        'DiskUsage': '',
-        'URL': '',
-        'FollowersURL': '',
-        'FollowingURL': '',
-        'ReposURL': '',
-        'StarredURL': '',
-        'GistsURL': '',
-        'htmlURL': '',
-        'EventsURL': '',
-        'OrganizationsURL': '',
-        'InvitationTeamsURL': '',
-        'ReceivedEventsURL': '',
-        'SubscriptionsURL': '',
-        'Repo': repo
-      }
-      return(info)
+    elif(user.name != ''):
+      queried_users = gh.search_users(user.name + ' in:name')
+    else:
+      queried_users = None
+      
+    if(queried_users == None):
+      utype = 'Anonymous'
+    elif(queried_users.totalCount == 0):
+      utype = 'Anonymous'
+    elif(queried_users.totalCount > 1):
+      utype = 'Multiple'
     else:
       user = queried_users.get_page(0)[0]
       utype = 'Queried'
-
+      
+    if((utype == 'Anonymous') or (utype == 'Multiple')):
+      info = {
+        'ID': None,
+        'NodeID': None,
+        'Username': None,
+        'Name': user.name,
+        'Avatar': None,
+        'Bio': None,
+        'Email': user.email,
+        'Location': None,
+        'Blog': None,
+        'Company': None,
+        'Hireable': None,
+        'Twitter': None,
+        'Collaborators': None,
+        'Contributions': user.contributions,
+        'Followers': None,
+        'Following': None,
+        'Gravatar': None,
+        'Hireable': None,
+        'Created': None,
+        'Updated': None,
+        'Suspended': None,
+        'Inviter': None,
+        'PrivateGists': None,
+        'PublicGists': None,
+        'PublicRepos': None,
+        'PrivateRepos': None,
+        'OwnedPrivateRepos': None,
+        'Plan': None,
+        'Role': None,
+        'TeamCount': None,
+        'Type': utype,
+        'SiteAdmin': None,
+        'DiskUsage': None,
+        'URL': None,
+        'FollowersURL': None,
+        'FollowingURL': None,
+        'ReposURL': None,
+        'StarredURL': None,
+        'GistsURL': None,
+        'htmlURL': None,
+        'EventsURL': None,
+        'OrganizationsURL': None,
+        'InvitationTeamsURL': None,
+        'ReceivedEventsURL': None,
+        'SubscriptionsURL': None,
+        'Repo': repo
+      }
+      return(info)
+      
   info = {
     'ID': user.id,
     'NodeID': user.node_id,
@@ -198,6 +154,7 @@ def get_user_info(user, repo):
     'Repo': repo
   }
   return(info)
+
 
 i = 0
 d = []
