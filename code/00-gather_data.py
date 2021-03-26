@@ -29,6 +29,11 @@ sr = support_rms_repo
 rr_users = rr.get_contributors(anon=1)
 sr_users = sr.get_contributors(anon=1)
 
+def log_writer(text, filename):
+  file = open(filename + ".log", "a")
+  file.write(text + "\n")
+  file.close()
+
 def get_user_info(user, repo):
   utype = user.type
   if(utype == 'Anonymous'):
@@ -130,16 +135,23 @@ for u in rr_users:
       print('Rate limit at time of error:')
       print(gh.get_rate_limit().core)
       print('---')
+      log_writer('Rate limit at time of error:', 'rate')
+      log_writer(gh.get_rate_limit().core, 'rate')
+      log_writer('---', 'rate')
       time.sleep(10)
       continue
     except Exception as e:
       print('An unhandled error occurred:')
       print(e)
       print('---')
+      log_writer('An unhandled error occurred:', 'error')
+      log_writer(e, 'error')
+      log_writer('---', 'error')
       continue
 
   i = i + 1
   if(i > 100):
+    log_writer('[' + datetime.now().strftime("%H:%M:%S") + '] Wrote to CSV', 'write')
     if first_write:
       pd.DataFrame(d).to_csv('data/rms-letter-signers.csv', index=False)
       first_write = False
@@ -152,9 +164,13 @@ for u in sr_users:
   d.append(get_user_info(u, 'sr'))
   i = i + 1
   if(i > 100):
+    log_writer('[' + datetime.now().strftime("%H:%M:%S") + '] Wrote to CSV', 'write')
     pd.DataFrame(d).to_csv('data/rms-letter-signers.csv', index=False, header=None, mode='a')
     d = []
     i = 0
 
+log_writer('[' + datetime.now().strftime("%H:%M:%S") + '] Final write to CSV', 'write')
 pd.DataFrame(d).to_csv('data/rms-letter-signers.csv', index=False, header=None, mode='a')
+
+print('Contributor list complete!')
 
