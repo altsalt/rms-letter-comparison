@@ -5,6 +5,8 @@
 1. `cd rms-letter-comparison`
 2. `source ./gh_credentials`
 3. `python3 ./code/00-gather_data.py`
+  - To view progress, consider running the following command:
+  - `watch -d -n 30 "wc -l ./data/rms-letter-signers.csv && tail write.log && tail rate.log && tail error.log"`
 4. Open `./code/01-process_data.R`, `./code/02-build_tables.R`, and `./rms-letter-comparison.Rmd` in RStudio
 5. Run each RScript in sequence, they will read in the raw data, process it, save it to Rds files, and produce the PDF, `./rms-letter-comparison.pdf`
 
