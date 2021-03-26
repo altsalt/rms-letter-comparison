@@ -6,15 +6,14 @@
 ## --
 
 
+import os
+import time
 import pandas as pd
 import numpy as np
 np.random.seed(42)
 
 from github import Github
 from github import RateLimitExceededException
-import os
-import time
-from pprint import pprint
 
 token = os.getenv('GITHUB_TOKEN')
 gh = Github(token)
@@ -29,8 +28,6 @@ sr = support_rms_repo
 ## https://stackoverflow.com/questions/36410357/github-v3-api-list-contributors
 rr_users = rr.get_contributors(anon=1)
 sr_users = sr.get_contributors(anon=1)
-
-d = []
 
 def get_user_info(user, repo):
   utype = user.type
@@ -116,6 +113,7 @@ def get_user_info(user, repo):
   return(info)
 
 i = 0
+d = []
 first_write = True
 #import pdb; pdb.set_trace()
 for u in rr_users:
