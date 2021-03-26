@@ -11,6 +11,7 @@ import numpy as np
 np.random.seed(42)
 
 from github import Github
+from github import RateLimitExceededException
 import os
 import time
 from pprint import pprint
@@ -123,21 +124,20 @@ for u in rr_users:
     try:
       d.append(get_user_info(u, 'rr'))
       rate_limiter = False
-#    except GithubException.RateLimitExceededException as e:
-#      print('Rate limit at time of error:')
-#      print(gh.get_rate_limit().core)
-#      time.sleep(5)
-#      continue
-    except Exception as e:
+    except RateLimitExceededException as e:
       # Q: Why is a rate limit exception being thrown despite being well within the 5,000 requests per hour limit?
       ## https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting
       ## A: It appears that the Search API is what is causing the problem, it is capped at 30 requests per minute. Luckily this does seem to be handling it.
       ## https://docs.github.com/en/rest/reference/search#rate-limit
-      print('An unhandled error occurred.')
-      print(e)
-      print('As this was likely related, Rate limit at time of error:')
+      print('Rate limit at time of error:')
       print(gh.get_rate_limit().core)
-      time.sleep(5)
+      print('---')
+      time.sleep(10)
+      continue
+    except Exception as e:
+      print('An unhandled error occurred:')
+      print(e)
+      print('---')
       continue
 
   i = i + 1
