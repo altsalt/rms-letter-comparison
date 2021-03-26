@@ -114,12 +114,49 @@ def get_user_info(user, repo):
   }
   return(info)
 
+i = 0
+first_write = True
 #import pdb; pdb.set_trace()
 for u in rr_users:
-  d.append(get_user_info(u, 'rr'))
+  rate_limiter = True
+  while rate_limiter:
+    try:
+      d.append(get_user_info(u, 'rr'))
+      rate_limiter = False
+#    except GithubException.RateLimitExceededException as e:
+#      print('Rate limit at time of error:')
+#      print(gh.get_rate_limit().core)
+#      time.sleep(5)
+#      continue
+    except Exception as e:
+      # Q: Why is a rate limit exception being thrown despite being well within the 5,000 requests per hour limit?
+      ## https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting
+      ## A: It appears that the Search API is what is causing the problem, it is capped at 30 requests per minute. Luckily this does seem to be handling it.
+      ## https://docs.github.com/en/rest/reference/search#rate-limit
+      print('An unhandled error occurred.')
+      print(e)
+      print('As this was likely related, Rate limit at time of error:')
+      print(gh.get_rate_limit().core)
+      time.sleep(5)
+      continue
+
+  i = i + 1
+  if(i > 100):
+    if first_write:
+      pd.DataFrame(d).to_csv('data/rms-letter-signers.csv', index=False)
+      first_write = False
+    else:
+      pd.DataFrame(d).to_csv('data/rms-letter-signers.csv', index=False, header=None, mode='a')
+    d = []
+    i = 0
 
 for u in sr_users:
   d.append(get_user_info(u, 'sr'))
+  i = i + 1
+  if(i > 100):
+    pd.DataFrame(d).to_csv('data/rms-letter-signers.csv', index=False, header=None, mode='a')
+    d = []
+    i = 0
 
-pd.DataFrame(d).to_csv('data/rms-letter-signers.csv', index=False)
+pd.DataFrame(d).to_csv('data/rms-letter-signers.csv', index=False, header=None, mode='a')
 

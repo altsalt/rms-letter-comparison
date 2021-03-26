@@ -36,7 +36,7 @@ df <- read.csv(here('data', 'rms-letter-signers.csv'))
 # Drop Unused Columns
 df$ID <- df$NodeID <- df$Gravatar <- df$Collaborators <- df$Inviter <- 
   df$PrivateGists <- df$PrivateRepos <- df$OwnedPrivateRepos <- 
-  df$Plan <- df$Role <- df$TeamCount <- df$Type <- df$DiskUsage <- 
+  df$Plan <- df$Role <- df$TeamCount <- df$DiskUsage <- 
   df$URL <- df$FollowersURL <- df$FollowingURL <- df$ReposURL <- 
   df$StarredURL <-df$GistsURL <- df$htmlURL <- df$EventsURL <-
   df$OrganizationsURL <- df$InvitationTeamsURL <- df$ReceivedEventsURL <- df$SubscriptionsURL <-
@@ -50,11 +50,33 @@ df_facts$orig_total_signers <- length(df$Username)
 df_facts$orig_rr_signers <- length(df$Username[df$Repo == 'rr'])
 df_facts$orig_sr_signers <- length(df$Username[df$Repo == 'sr'])
 
+
+df$Created[df$Type == 'Anonymous'] <- df$Created[df$Type == 'Multiple'] <- '1970-01-01 00:00:00'
+df$Updated[df$Type == 'Anonymous'] <- df$Updated[df$Type == 'Multiple'] <- '1970-01-01 00:00:00'
 df <- df %>%
   mutate(AccountAge = as.numeric(difftime(Updated, Created), units='weeks'))
 
 df_rr <- df[df$Repo == 'rr',]
 df_sr <- df[df$Repo == 'sr',]
+
+df_facts$total_known <- length(df$Username[df$Type == 'User'])
+df_facts$total_anonymous <- length(df$Username[df$Type == 'Anonymous'])
+df_facts$total_multiple <- length(df$Username[df$Type == 'Multiple'])
+df_facts$total_queried <- length(df$Username[df$Type == 'Queried'])
+df_facts$total_identified <- df_facts$total_queried + df_facts$total_known
+
+df_facts$rr_known <- length(df_rr$Username[df_rr$Type == 'User'])
+df_facts$rr_anonymous <- length(df_rr$Username[df_rr$Type == 'Anonymous'])
+df_facts$rr_multiple <- length(df_rr$Username[df_rr$Type == 'Multiple'])
+df_facts$rr_queried <- length(df_rr$Username[df_rr$Type == 'Queried'])
+df_facts$rr_identified <- df_facts$rr_queried + df_facts$rr_known
+
+df_facts$sr_known <- length(df_sr$Username[df_sr$Type == 'User'])
+df_facts$sr_anonymous <- length(df_sr$Username[df_sr$Type == 'Anonymous'])
+df_facts$sr_multiple <- length(df_sr$Username[df_sr$Type == 'Multiple'])
+df_facts$sr_queried <- length(df_sr$Username[df_sr$Type == 'Queried'])
+df_facts$sr_identified <- df_facts$sr_queried + df_facts$sr_known
+
 
 df_facts$total_with_name <- length(df$Username[df$Name != ''])
 df_facts$rr_with_name <- length(df_rr$Username[df_rr$Name != ''])
@@ -125,6 +147,26 @@ df_facts$rr_median_following <- median(df_rr$Following)
 df_facts$sr_median_following <- median(df_sr$Following)
 
 # Percentages
+
+df_facts$total_percentage_known <- 100 * (length(df$Username[df$Type == 'User']) / df_facts$orig_total_signers)
+df_facts$total_percentage_anonymous <- 100 * (length(df$Username[df$Type == 'Anonymous']) / df_facts$orig_total_signers)
+df_facts$total_percentage_multiple <- 100 * (length(df$Username[df$Type == 'Multiple']) / df_facts$orig_total_signers)
+df_facts$total_percentage_queried <- 100 * (length(df$Username[df$Type == 'Queried']) / df_facts$orig_total_signers)
+df_facts$total_percentage_identified <- df_facts$total_percentage_queried + df_facts$total_percentage_known
+
+df_facts$rr_percentage_known <- 100 * (length(df_rr$Username[df_rr$Type == 'User']) / df_facts$orig_rr_signers)
+df_facts$rr_percentage_anonymous <- 100 * (length(df_rr$Username[df_rr$Type == 'Anonymous']) / df_facts$orig_rr_signers)
+df_facts$rr_percentage_multiple <- 100 * (length(df_rr$Username[df_rr$Type == 'Multiple']) / df_facts$orig_rr_signers)
+df_facts$rr_percentage_queried <- 100 * (length(df_rr$Username[df_rr$Type == 'Queried']) / df_facts$orig_rr_signers)
+df_facts$rr_percentage_identified <- df_facts$rr_percentage_queried + df_facts$rr_percentage_known
+
+df_facts$sr_percentage_known <- 100 * (length(df_sr$Username[df_sr$Type == 'User']) / df_facts$orig_sr_signers)
+df_facts$sr_percentage_anonymous <- 100 * (length(df_sr$Username[df_sr$Type == 'Anonymous']) / df_facts$orig_sr_signers)
+df_facts$sr_percentage_multiple <- 100 * (length(df_sr$Username[df_sr$Type == 'Multiple']) / df_facts$orig_sr_signers)
+df_facts$sr_percentage_queried <- 100 * (length(df_sr$Username[df_sr$Type == 'Queried']) / df_facts$orig_sr_signers)
+df_facts$sr_percentage_identified <- df_facts$sr_percentage_queried + df_facts$sr_percentage_known
+
+
 df_facts$total_percentage_with_name <- 100 * (length(df$Username[df$Name != '']) / df_facts$orig_total_signers)
 df_facts$rr_percentage_with_name <- 100 * (length(df_rr$Username[df_rr$Name != '']) / df_facts$orig_rr_signers)
 df_facts$sr_percentage_with_name <- 100 * (length(df_sr$Username[df_sr$Name != '']) / df_facts$orig_sr_signers)
