@@ -78,8 +78,8 @@ total_column <- c(df_facts$orig_total_signers, df_facts$total_percentage_known,
 facts_table <- data.frame(rr_column, sr_column, total_column)
 names(facts_table) <- c('Reject rms', 'Support rms', 'Total')
 rownames(facts_table) <- c('Number of Signers', 'Percentage Self Identified',
-                           'Percentage Anonymous', 'Percentage Multiple Potential Identities',
-                           'Percentage Query Identified',
+                           'Percentage Anonymous', 'Percentage with Multiple Potential Identities',
+                           'Percentage Identified via Query', 'Percentage Identifiable',
                            'Percentage with Name',
                            'Percentage with Bio', 'Percentage with Email',
                            'Percentage with Blog', 'Percentage with Twitter',
