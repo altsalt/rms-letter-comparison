@@ -34,10 +34,10 @@ df <- read.csv(here('data', 'rms-letter-signers.csv'))
 #df_facts <- readRDS(here('data', 'facts.Rds'))
 
 # Drop Unused Columns
-df$ID <- df$NodeID <- df$Gravatar <- df$Collaborators <- df$Inviter <- 
-  df$PrivateGists <- df$PrivateRepos <- df$OwnedPrivateRepos <- 
-  df$Plan <- df$Role <- df$TeamCount <- df$DiskUsage <- 
-  df$URL <- df$FollowersURL <- df$FollowingURL <- df$ReposURL <- 
+df$ID <- df$NodeID <- df$Gravatar <- df$Collaborators <- df$Inviter <-
+  df$PrivateGists <- df$PrivateRepos <- df$OwnedPrivateRepos <-
+  df$Plan <- df$Role <- df$TeamCount <- df$DiskUsage <-
+  df$URL <- df$FollowersURL <- df$FollowingURL <- df$ReposURL <-
   df$StarredURL <-df$GistsURL <- df$htmlURL <- df$EventsURL <-
   df$OrganizationsURL <- df$InvitationTeamsURL <- df$ReceivedEventsURL <- df$SubscriptionsURL <-
   NULL

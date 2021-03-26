@@ -18,8 +18,8 @@ from github import RateLimitExceededException
 token = os.getenv('GITHUB_TOKEN')
 gh = Github(token)
 
-reject_rms_repo = gh.get_repo("rms-open-letter/rms-open-letter.github.io")
-support_rms_repo = gh.get_repo("rms-support-letter/rms-support-letter.github.io")
+reject_rms_repo = gh.get_repo('rms-open-letter/rms-open-letter.github.io')
+support_rms_repo = gh.get_repo('rms-support-letter/rms-support-letter.github.io')
 rr = reject_rms_repo
 sr = support_rms_repo
 
@@ -30,8 +30,8 @@ rr_users = rr.get_contributors(anon=1)
 sr_users = sr.get_contributors(anon=1)
 
 def log_writer(text, filename):
-  file = open(filename + ".log", "a")
-  file.write(text + "\n")
+  file = open(filename + '.log', 'a')
+  file.write(str(text) + '\n')
   file.close()
 
 def get_user_info(user, repo):
@@ -46,20 +46,102 @@ def get_user_info(user, repo):
 
       if((user.name == '') or (queried_users.totalCount == 0)):
         info = {
+          'ID': '',
+          'NodeID': '',
+          'Username': '',
           'Name': user.name,
+          'Avatar': '',
+          'Bio': '',
           'Email': user.email,
+          'Location': '',
+          'Blog': '',
+          'Company': '',
+          'Hireable': '',
+          'Twitter': '',
+          'Collaborators': '',
           'Contributions': user.contributions,
+          'Followers': '',
+          'Following': '',
+          'Gravatar': '',
+          'Hireable': '',
+          'Created': '',
+          'Updated': '',
+          'Suspended': '',
+          'Inviter': '',
+          'PrivateGists': '',
+          'PublicGists': '',
+          'PublicRepos': '',
+          'PrivateRepos': '',
+          'OwnedPrivateRepos': '',
+          'Plan': '',
+          'Role': '',
+          'TeamCount': '',
           'Type': 'Anonymous',
+          'SiteAdmin': '',
+          'DiskUsage': '',
+          'URL': '',
+          'FollowersURL': '',
+          'FollowingURL': '',
+          'ReposURL': '',
+          'StarredURL': '',
+          'GistsURL': '',
+          'htmlURL': '',
+          'EventsURL': '',
+          'OrganizationsURL': '',
+          'InvitationTeamsURL': '',
+          'ReceivedEventsURL': '',
+          'SubscriptionsURL': '',
           'Repo': repo
         }
         return(info)
 
     if(queried_users.totalCount > 1):
       info = {
+        'ID': '',
+        'NodeID': '',
+        'Username': '',
         'Name': user.name,
+        'Avatar': '',
+        'Bio': '',
         'Email': user.email,
+        'Location': '',
+        'Blog': '',
+        'Company': '',
+        'Hireable': '',
+        'Twitter': '',
+        'Collaborators': '',
         'Contributions': user.contributions,
+        'Followers': '',
+        'Following': '',
+        'Gravatar': '',
+        'Hireable': '',
+        'Created': '',
+        'Updated': '',
+        'Suspended': '',
+        'Inviter': '',
+        'PrivateGists': '',
+        'PublicGists': '',
+        'PublicRepos': '',
+        'PrivateRepos': '',
+        'OwnedPrivateRepos': '',
+        'Plan': '',
+        'Role': '',
+        'TeamCount': '',
         'Type': 'Multiple',
+        'SiteAdmin': '',
+        'DiskUsage': '',
+        'URL': '',
+        'FollowersURL': '',
+        'FollowingURL': '',
+        'ReposURL': '',
+        'StarredURL': '',
+        'GistsURL': '',
+        'htmlURL': '',
+        'EventsURL': '',
+        'OrganizationsURL': '',
+        'InvitationTeamsURL': '',
+        'ReceivedEventsURL': '',
+        'SubscriptionsURL': '',
         'Repo': repo
       }
       return(info)
@@ -132,16 +214,13 @@ for u in rr_users:
       ## https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting
       ## A: It appears that the Search API is what is causing the problem, it is capped at 30 requests per minute. Luckily this does seem to be handling it.
       ## https://docs.github.com/en/rest/reference/search#rate-limit
-      print('Rate limit at time of error:')
-      print(gh.get_rate_limit().core)
-      print('---')
-      log_writer('Rate limit at time of error:', 'rate')
+      log_writer('[' + time.asctime() + '] Rate limit at time of error:', 'rate')
       log_writer(gh.get_rate_limit().core, 'rate')
       log_writer('---', 'rate')
       time.sleep(10)
       continue
     except Exception as e:
-      print('An unhandled error occurred:')
+      print('[' + time.asctime() + '] An unhandled error occurred:')
       print(e)
       print('---')
       log_writer('An unhandled error occurred:', 'error')
@@ -151,7 +230,7 @@ for u in rr_users:
 
   i = i + 1
   if(i > 100):
-    log_writer('[' + datetime.now().strftime("%H:%M:%S") + '] Wrote to CSV', 'write')
+    log_writer('[' + time.asctime() + '] Wrote to CSV', 'write')
     if first_write:
       pd.DataFrame(d).to_csv('data/rms-letter-signers.csv', index=False)
       first_write = False
@@ -164,12 +243,12 @@ for u in sr_users:
   d.append(get_user_info(u, 'sr'))
   i = i + 1
   if(i > 100):
-    log_writer('[' + datetime.now().strftime("%H:%M:%S") + '] Wrote to CSV', 'write')
+    log_writer('[' + time.asctime() + '] Wrote to CSV', 'write')
     pd.DataFrame(d).to_csv('data/rms-letter-signers.csv', index=False, header=None, mode='a')
     d = []
     i = 0
 
-log_writer('[' + datetime.now().strftime("%H:%M:%S") + '] Final write to CSV', 'write')
+log_writer('[' + time.asctime() + '] Final write to CSV', 'write')
 pd.DataFrame(d).to_csv('data/rms-letter-signers.csv', index=False, header=None, mode='a')
 
 print('Contributor list complete!')
