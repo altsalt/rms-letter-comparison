@@ -1,7 +1,7 @@
 ## ---
 # title: "RMS Letter Comparison"
 # author: "Wm Salt Hale"
-# date: "March 25, 2021"
+# date: "March 26, 2021"
 # license: "GPL-3"
 ## --
 
@@ -34,263 +34,14 @@ def log_writer(text, filename):
   file.write(str(text) + '\n')
   file.close()
 
-def get_user_info(user, repo):
-  utype = user.type
-  if(utype == 'Anonymous'):
-    if(user.email != ''):
-      rate_limiter = True
-      while rate_limiter:
-        try:
-          queried_users = gh.search_users(user.email)
-          rate_limiter = False
-        except RateLimitExceededException as e:
-          log_writer('(level 3.1)', 'rate')
-          log_writer('[' + time.asctime() + '] Rate limit at time of error:', 'rate')
-          log_writer(gh.get_rate_limit().core, 'rate')
-          log_writer('---', 'rate')
-          time.sleep(10)
-          continue
-        except Exception as e:
-          print('[' + time.asctime() + '] An unhandled error occurred:')
-          print(e)
-          print('---')
-          log_writer('(level 3.1)', 'error')
-          log_writer('An unhandled error occurred:', 'error')
-          log_writer(e, 'error')
-          log_writer('---', 'error')
-          continue
-    elif(user.name != ''):
-      rate_limiter = True
-      while rate_limiter:
-        try:
-          queried_users = gh.search_users(user.name + ' in:name')
-          rate_limiter = False
-        except RateLimitExceededException as e:
-          log_writer('(level 3.2)', 'rate')
-          log_writer('[' + time.asctime() + '] Rate limit at time of error:', 'rate')
-          log_writer(gh.get_rate_limit().core, 'rate')
-          log_writer('---', 'rate')
-          time.sleep(10)
-          continue
-        except Exception as e:
-          print('[' + time.asctime() + '] An unhandled error occurred:')
-          print(e)
-          print('---')
-          log_writer('(level 3.2)', 'error')
-          log_writer('An unhandled error occurred:', 'error')
-          log_writer(e, 'error')
-          log_writer('---', 'error')
-          continue
-    else:
-      queried_users = None
-    if(queried_users == None):
-      utype = 'Anonymous'
-    else:
-      rate_limiter = True
-      while rate_limiter:
-        try:
-          qucount = queried_users.totalCount
-          rate_limiter = False
-        except RateLimitExceededException as e:
-          log_writer('(level 2.1)', 'rate')
-          log_writer('[' + time.asctime() + '] Rate limit at time of error:', 'rate')
-          log_writer(gh.get_rate_limit().core, 'rate')
-          log_writer('---', 'rate')
-          time.sleep(10)
-          continue
-        except Exception as e:
-          print('[' + time.asctime() + '] An unhandled error occurred:')
-          print(e)
-          print('---')
-          log_writer('(level 2.1)', 'error')
-          log_writer('An unhandled error occurred:', 'error')
-          log_writer(e, 'error')
-          log_writer('---', 'error')
-          continue
-    if(qucount == 0):
-      utype = 'Anonymous'
-    elif(qucount > 1):
-      utype = 'Multiple'
-    else:
-      rate_limiter = True
-      while rate_limiter:
-        try:
-          user = queried_users.get_page(0)[0]
-          utype = 'Queried'
-          rate_limiter = False
-        except RateLimitExceededException as e:
-          log_writer('(level 2.2)', 'rate')
-          log_writer('[' + time.asctime() + '] Rate limit at time of error:', 'rate')
-          log_writer(gh.get_rate_limit().core, 'rate')
-          log_writer('---', 'rate')
-          time.sleep(10)
-          continue
-        except Exception as e:
-          print('[' + time.asctime() + '] An unhandled error occurred:')
-          print(e)
-          print('---')
-          log_writer('(level 2.2)', 'error')
-          log_writer('An unhandled error occurred:', 'error')
-          log_writer(e, 'error')
-          log_writer('---', 'error')
-          continue
-  if((utype == 'Anonymous') or (utype == 'Multiple')):
-    rate_limiter = True
-    while rate_limiter:
-      try:
-        info = {
-          'ID': None,
-          'NodeID': None,
-          'Username': None,
-          'Name': user.name,
-          'Avatar': None,
-          'Bio': None,
-          'Email': user.email,
-          'Location': None,
-          'Blog': None,
-          'Company': None,
-          'Hireable': None,
-          'Twitter': None,
-          'Collaborators': None,
-          'Contributions': user.contributions,
-          'Followers': None,
-          'Following': None,
-          'Gravatar': None,
-          'Hireable': None,
-          'Created': None,
-          'Updated': None,
-          'Suspended': None,
-          'Inviter': None,
-          'PrivateGists': None,
-          'PublicGists': None,
-          'PublicRepos': None,
-          'PrivateRepos': None,
-          'OwnedPrivateRepos': None,
-          'Plan': None,
-          'Role': None,
-          'TeamCount': None,
-          'Type': utype,
-          'SiteAdmin': None,
-          'DiskUsage': None,
-          'URL': None,
-          'FollowersURL': None,
-          'FollowingURL': None,
-          'ReposURL': None,
-          'StarredURL': None,
-          'GistsURL': None,
-          'htmlURL': None,
-          'EventsURL': None,
-          'OrganizationsURL': None,
-          'InvitationTeamsURL': None,
-          'ReceivedEventsURL': None,
-          'SubscriptionsURL': None,
-          'Repo': repo
-        }
-        rate_limiter = False
-      except RateLimitExceededException as e:
-        log_writer('(level 1.1)', 'rate')
-        log_writer('[' + time.asctime() + '] Rate limit at time of error:', 'rate')
-        log_writer(gh.get_rate_limit().core, 'rate')
-        log_writer('---', 'rate')
-        time.sleep(10)
-        continue
-      except Exception as e:
-        print('[' + time.asctime() + '] An unhandled error occurred:')
-        print(e)
-        print('---')
-        log_writer('(level 1.1)', 'error')
-        log_writer('An unhandled error occurred:', 'error')
-        log_writer(e, 'error')
-        log_writer('---', 'error')
-        continue
-  else:
-    rate_limiter = True
-    while rate_limiter:
-      try:
-        info = {
-          'ID': user.id,
-          'NodeID': user.node_id,
-          'Username': user.login,
-          'Name': user.name,
-          'Avatar': user.avatar_url,
-          'Bio': user.bio,
-          'Email': user.email,
-          'Location': user.location,
-          'Blog': user.blog,
-          'Company': user.company,
-          'Hireable': user.hireable,
-          'Twitter': user.twitter_username,
-          'Collaborators': user.collaborators,
-          'Contributions': user.contributions,
-          'Followers': user.followers,
-          'Following': user.following,
-          'Gravatar': user.gravatar_id,
-          'Hireable': user.hireable,
-          'Created': user.created_at,
-          'Updated': user.updated_at,
-          'Suspended': user.suspended_at,
-          'Inviter': user.inviter,
-          'PrivateGists': user.private_gists,
-          'PublicGists': user.public_gists,
-          'PublicRepos': user.public_repos,
-          'PrivateRepos': user.total_private_repos,
-          'OwnedPrivateRepos': user.owned_private_repos,
-          'Plan': user.plan,
-          'Role': user.role,
-          'TeamCount': user.team_count,
-          'Type': utype,
-          'SiteAdmin': user.site_admin,
-          'DiskUsage': user.disk_usage,
-          'URL': user.url,
-          'FollowersURL': user.followers_url,
-          'FollowingURL': user.following_url,
-          'ReposURL': user.repos_url,
-          'StarredURL': user.starred_url,
-          'GistsURL': user.gists_url,
-          'htmlURL': user.html_url,
-          'EventsURL': user.events_url,
-          'OrganizationsURL': user.organizations_url,
-          'InvitationTeamsURL': user.invitation_teams_url,
-          'ReceivedEventsURL': user.received_events_url,
-          'SubscriptionsURL': user.subscriptions_url,
-          'Repo': repo
-        }
-        rate_limiter = False
-      except RateLimitExceededException as e:
-        log_writer('(level 1.2)', 'rate')
-        log_writer('[' + time.asctime() + '] Rate limit at time of error:', 'rate')
-        log_writer(gh.get_rate_limit().core, 'rate')
-        log_writer('---', 'rate')
-        time.sleep(10)
-        continue
-      except Exception as e:
-        print('[' + time.asctime() + '] An unhandled error occurred:')
-        print(e)
-        print('---')
-        log_writer('(level 1.2)', 'error')
-        log_writer('An unhandled error occurred:', 'error')
-        log_writer(e, 'error')
-        log_writer('---', 'error')
-        continue
-  return(info)
-
-
-i = 0
-d = []
-first_write = True
-#import pdb; pdb.set_trace()
-for u in rr_users:
-  rate_limiter = True
-  while rate_limiter:
+def rate_limiter(call, location):
+  successful_call = False
+  while not successful_call:
     try:
-      d.append(get_user_info(u, 'rr'))
-      rate_limiter = False
+      response = call
+      successful_call = True
     except RateLimitExceededException as e:
-      # Q: Why is a rate limit exception being thrown despite being well within the 5,000 requests per hour limit?
-      ## https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting
-      ## A: It appears that the Search API is what is causing the problem, it is capped at 30 requests per minute. Luckily this does seem to be handling it.
-      ## https://docs.github.com/en/rest/reference/search#rate-limit
-      log_writer('(top level)', 'rate')
+      log_writer(location, 'rate')
       log_writer('[' + time.asctime() + '] Rate limit at time of error:', 'rate')
       log_writer(gh.get_rate_limit().core, 'rate')
       log_writer('---', 'rate')
@@ -300,11 +51,142 @@ for u in rr_users:
       print('[' + time.asctime() + '] An unhandled error occurred:')
       print(e)
       print('---')
-      log_writer('(top level.1)', 'error')
+      log_writer(location, 'error')
       log_writer('An unhandled error occurred:', 'error')
       log_writer(e, 'error')
       log_writer('---', 'error')
       continue
+  return(response)
+
+def get_user_info(user, repo):
+  utype = user.type
+  if(utype == 'Anonymous'):
+    if(user.email != ''):
+      queried_users = rate_limiter(gh.search_users(user.email), '(email check)')
+    elif(user.name != ''):
+      queried_users = rate_limiter(gh.search_users(user.name + ' in:name'), '(name check)')
+    else:
+      queried_users = None
+      
+    if(queried_users == None):
+      utype = 'Anonymous'
+    else:
+      qucount = rate_limiter(queried_users.totalCount, '(user count)')
+      if(qucount == 0):
+        utype = 'Anonymous'
+      elif(qucount > 1):
+        utype = 'Multiple'
+      else:
+        user = rate_limiter(queried_users.get_page(0)[0], '(get individual user)')
+        utype = 'Queried'
+        
+  if((utype == 'Anonymous') or (utype == 'Multiple')):
+    info = {
+      'ID': None,
+      'NodeID': None,
+      'Username': None,
+      'Name': user.name,
+      'Avatar': None,
+      'Bio': None,
+      'Email': user.email,
+      'Location': None,
+      'Blog': None,
+      'Company': None,
+      'Hireable': None,
+      'Twitter': None,
+      'Collaborators': None,
+      'Contributions': user.contributions,
+      'Followers': None,
+      'Following': None,
+      'Gravatar': None,
+      'Hireable': None,
+      'Created': None,
+      'Updated': None,
+      'Suspended': None,
+      'Inviter': None,
+      'PrivateGists': None,
+      'PublicGists': None,
+      'PublicRepos': None,
+      'PrivateRepos': None,
+      'OwnedPrivateRepos': None,
+      'Plan': None,
+      'Role': None,
+      'TeamCount': None,
+      'Type': utype,
+      'SiteAdmin': None,
+      'DiskUsage': None,
+      'URL': None,
+      'FollowersURL': None,
+      'FollowingURL': None,
+      'ReposURL': None,
+      'StarredURL': None,
+      'GistsURL': None,
+      'htmlURL': None,
+      'EventsURL': None,
+      'OrganizationsURL': None,
+      'InvitationTeamsURL': None,
+      'ReceivedEventsURL': None,
+      'SubscriptionsURL': None,
+      'Repo': repo
+    }
+  else:
+    info = {
+      'ID': user.id,
+      'NodeID': user.node_id,
+      'Username': user.login,
+      'Name': user.name,
+      'Avatar': user.avatar_url,
+      'Bio': user.bio,
+      'Email': user.email,
+      'Location': user.location,
+      'Blog': user.blog,
+      'Company': user.company,
+      'Hireable': user.hireable,
+      'Twitter': user.twitter_username,
+      'Collaborators': user.collaborators,
+      'Contributions': user.contributions,
+      'Followers': user.followers,
+      'Following': user.following,
+      'Gravatar': user.gravatar_id,
+      'Hireable': user.hireable,
+      'Created': user.created_at,
+      'Updated': user.updated_at,
+      'Suspended': user.suspended_at,
+      'Inviter': user.inviter,
+      'PrivateGists': user.private_gists,
+      'PublicGists': user.public_gists,
+      'PublicRepos': user.public_repos,
+      'PrivateRepos': user.total_private_repos,
+      'OwnedPrivateRepos': user.owned_private_repos,
+      'Plan': user.plan,
+      'Role': user.role,
+      'TeamCount': user.team_count,
+      'Type': utype,
+      'SiteAdmin': user.site_admin,
+      'DiskUsage': user.disk_usage,
+      'URL': user.url,
+      'FollowersURL': user.followers_url,
+      'FollowingURL': user.following_url,
+      'ReposURL': user.repos_url,
+      'StarredURL': user.starred_url,
+      'GistsURL': user.gists_url,
+      'htmlURL': user.html_url,
+      'EventsURL': user.events_url,
+      'OrganizationsURL': user.organizations_url,
+      'InvitationTeamsURL': user.invitation_teams_url,
+      'ReceivedEventsURL': user.received_events_url,
+      'SubscriptionsURL': user.subscriptions_url,
+      'Repo': repo
+    }
+  return(info)
+
+
+i = 0
+d = []
+first_write = True
+#import pdb; pdb.set_trace()
+for u in rr_users:
+  d.append(rate_limiter(get_user_info(u, 'rr'), '(rr loop)'))
   i = i + 1
   if(i > 100):
     log_writer('[' + time.asctime() + '] Wrote to CSV', 'write')
@@ -317,31 +199,7 @@ for u in rr_users:
     i = 0
 
 for u in sr_users:
-  rate_limiter = True
-  while rate_limiter:
-    try:
-      d.append(get_user_info(u, 'sr'))
-      rate_limiter = False
-    except RateLimitExceededException as e:
-      # Q: Why is a rate limit exception being thrown despite being well within the 5,000 requests per hour limit?
-      ## https://docs.github.com/en/rest/overview/resources-in-the-rest-api#rate-limiting
-      ## A: It appears that the Search API is what is causing the problem, it is capped at 30 requests per minute. Luckily this does seem to be handling it.
-      ## https://docs.github.com/en/rest/reference/search#rate-limit
-      log_writer('(top level)', 'rate')
-      log_writer('[' + time.asctime() + '] Rate limit at time of error:', 'rate')
-      log_writer(gh.get_rate_limit().core, 'rate')
-      log_writer('---', 'rate')
-      time.sleep(10)
-      continue
-    except Exception as e:
-      print('[' + time.asctime() + '] An unhandled error occurred:')
-      print(e)
-      print('---')
-      log_writer('(top level.2)', 'error')
-      log_writer('An unhandled error occurred:', 'error')
-      log_writer(e, 'error')
-      log_writer('---', 'error')
-      continue
+  d.append(rate_limiter(get_user_info(u, 'sr'), '(sr loop)'))
   i = i + 1
   if(i > 100):
     log_writer('[' + time.asctime() + '] Wrote to CSV', 'write')
