@@ -1,7 +1,7 @@
 ### ---
 # title: "RMS Letter Comparison"
 # author: "Wm Salt Hale"
-# date: "March 25, 2021"
+# date: "March 26, 2021"
 # license: "GPL-3"
 ## ---
 
@@ -35,11 +35,31 @@ df_facts <- readRDS(here('data', 'facts.Rds'))
 # Create empty list to store tables
 df_tables <- list()
 
-# Generate facts table
+# Generate breakdown table
 rr_column <- c(df_facts$orig_rr_signers, df_facts$rr_percentage_known,
                df_facts$rr_percentage_anonymous, df_facts$rr_percentage_multiple,
-               df_facts$rr_percentage_queried, df_facts$rr_percentage_identified,
-               df_facts$rr_percentage_with_name,
+               df_facts$rr_percentage_queried, df_facts$rr_percentage_identified)
+
+sr_column <- c(df_facts$orig_sr_signers, df_facts$sr_percentage_known,
+               df_facts$sr_percentage_anonymous, df_facts$sr_percentage_multiple,
+               df_facts$sr_percentage_queried, df_facts$sr_percentage_identified)
+
+total_column <- c(df_facts$orig_total_signers, df_facts$total_percentage_known,
+                  df_facts$total_percentage_anonymous, df_facts$total_percentage_multiple,
+                  df_facts$total_percentage_queried, df_facts$total_percentage_identified)
+
+breakdown_table <- data.frame(rr_column, sr_column, total_column)
+names(breakdown_table) <- c('Reject rms', 'Support rms', 'Total')
+rownames(breakdown_table) <- c('Number of Signers', 'Percentage Self Identified',
+                           'Percentage Anonymous', 'Percentage with Multiple Potential Identities',
+                           'Percentage Identified via Query', 'Percentage Identifiable')
+
+df_tables$breakdown_table <- breakdown_table
+
+
+
+# Generate demographics table
+rr_column <- c(df_facts$orig_rr_signers, df_facts$rr_percentage_with_name,
                df_facts$rr_percentage_with_bio, df_facts$rr_percentage_with_email,
                df_facts$rr_percentage_with_blog, df_facts$rr_percentage_with_twitter,
                df_facts$rr_percentage_with_company, df_facts$rr_unique_companies,
@@ -49,10 +69,7 @@ rr_column <- c(df_facts$orig_rr_signers, df_facts$rr_percentage_known,
                df_facts$rr_mean_followers, df_facts$rr_median_followers,
                df_facts$rr_mean_following, df_facts$rr_median_following)
 
-sr_column <- c(df_facts$orig_sr_signers, df_facts$sr_percentage_known,
-               df_facts$sr_percentage_anonymous, df_facts$sr_percentage_multiple,
-               df_facts$sr_percentage_queried, df_facts$sr_percentage_identified,
-               df_facts$sr_percentage_with_name,
+sr_column <- c(df_facts$orig_sr_signers, df_facts$sr_percentage_with_name,
                df_facts$sr_percentage_with_bio, df_facts$sr_percentage_with_email,
                df_facts$sr_percentage_with_blog, df_facts$sr_percentage_with_twitter,
                df_facts$sr_percentage_with_company, df_facts$sr_unique_companies,
@@ -62,10 +79,7 @@ sr_column <- c(df_facts$orig_sr_signers, df_facts$sr_percentage_known,
                df_facts$sr_mean_followers, df_facts$sr_median_followers,
                df_facts$sr_mean_following, df_facts$sr_median_following)
 
-total_column <- c(df_facts$orig_total_signers, df_facts$total_percentage_known,
-                  df_facts$total_percentage_anonymous, df_facts$total_percentage_multiple,
-                  df_facts$total_percentage_queried, df_facts$total_percentage_identified,
-                  df_facts$total_percentage_with_name,
+total_column <- c(df_facts$orig_total_signers, df_facts$total_percentage_with_name,
                   df_facts$total_percentage_with_bio, df_facts$total_percentage_with_email,
                   df_facts$total_percentage_with_blog, df_facts$total_percentage_with_twitter,
                   df_facts$total_percentage_with_company, df_facts$total_unique_companies,
@@ -75,12 +89,9 @@ total_column <- c(df_facts$orig_total_signers, df_facts$total_percentage_known,
                   df_facts$total_mean_followers, df_facts$total_median_followers,
                   df_facts$total_mean_following, df_facts$total_median_following)
 
-facts_table <- data.frame(rr_column, sr_column, total_column)
-names(facts_table) <- c('Reject rms', 'Support rms', 'Total')
-rownames(facts_table) <- c('Number of Signers', 'Percentage Self Identified',
-                           'Percentage Anonymous', 'Percentage with Multiple Potential Identities',
-                           'Percentage Identified via Query', 'Percentage Identifiable',
-                           'Percentage with Name',
+demographics_table <- data.frame(rr_column, sr_column, total_column)
+names(demographics_table) <- c('Reject rms', 'Support rms', 'Total')
+rownames(demographics_table) <- c('Number of Signers', 'Percentage with Name',
                            'Percentage with Bio', 'Percentage with Email',
                            'Percentage with Blog', 'Percentage with Twitter',
                            'Percentage with Company', 'Total Unique Companies',
@@ -90,7 +101,8 @@ rownames(facts_table) <- c('Number of Signers', 'Percentage Self Identified',
                            'Mean Followers', 'Median Followers',
                            'Mean Following', 'Median Following')
 
-df_tables$facts_table <- facts_table
+df_tables$demographics_table <- demographics_table
+
 
 #saveRDS(df, file=here('data', 'dataset.Rds'))
 #saveRDS(df_facts, file=here('data', 'facts.Rds'))

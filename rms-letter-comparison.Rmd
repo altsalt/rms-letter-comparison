@@ -1,7 +1,7 @@
 ---
 title: "GitHub Petitions Regarding Removal of RMS: Contributor Comparison"
 author: "Wm Salt Hale  \n<www.altsalt.net>"
-date: "March 25, 2021"
+date: "March 26, 2021"
 lang: en-US
 fontsize: 12pt
 # documentclass: article
@@ -69,36 +69,35 @@ source(here('code', '99_helpers.R'))
 
 ```
 
+```{r Load Data, include=FALSE}
+# Load Data
+df <- readRDS(here('data', 'dataset.Rds'))
+df_facts <- readRDS(here('data', 'facts.Rds'))
+df_tables <- readRDS(here('data', 'tables.Rds'))
+
+```
+
 On March 22, 2021 the former president of the Free Software Foundation (FSF) Richard M. Stallman (rms) announced that he would be returning to the FSF board.\footnote{\url{https://twitter.com/nixcraft/status/1373905399707955202}} This comes 18 months after he stepped down, due to public pressure regarding, among other things, statements relating to the involvement of Marvin Minsky and Jeffrey Epstein.\footnote{\url{https://itsfoss.com/richard-stallman-controversy}}
 
 On March 23, 2021 a letter was published online calling for the removal of rms from all leadership positions within the Free/Libre/Open Source Software community.\footnote{\url{https://rms-open-letter.github.io/}} Shortly thereafter, a counter letter, in support of the return of rms was published.\footnote{\url{https://rms-support-letter.github.io/}}
 
-Each of these letters called for readers to add their signatures via a pull request (PR) using GitHub, one of the largest hosts for FLOSS projects. As of 10:00:00 UTC on March 25, 2021, the letter requesting removal has received over 2,000 signatures, while the letter in support of remaining has received just over 1,400.
+Each of these letters called for readers to add their signatures via a pull request (PR) using GitHub, one of the largest hosts for FLOSS projects. As of `r format(Sys.time(), "%T %Z")` on `r format.date(Sys.time())`, the letter requesting removal has received `r f(df_facts$orig_rr_signers)` signatures, while the letter in support of remaining has received `r f(df_facts$orig_sr_signers)`.
 
 Below is a cursory analysis comparing contributors to each letter. The data used was acquired from GitHub via thier official API, accessed using the PyGithub library.\footnote{\url{https://github.com/PyGithub/PyGithub}} It was then processed in R, making use of tools from the tidyverse library.\footnote{\url{https://www.tidyverse.org/}}
 
 The documentation provided for this project is released under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0) https://creativecommons.org/licenses/by-sa/4.0/. The code provided for this project is released under the GNU General Public License version 3 (GNU GPLv3) https://www.gnu.org/licenses/gpl-3.0. The data was collected from GitHub. All data provided for this project is subject to the terms outlined on this page: https://docs.github.com/en/github/site-policy/github-terms-of-service
 
 
-
-```{r Load Data, include=FALSE}
-# Load Data
-df <- readRDS(here('data', 'dataset.Rds'))
-df_facts <- readRDS(here('data', 'facts.Rds'))
-df_tables <- readRDS(here('data', 'tables.Rds'))
-facts_table <- df_tables$facts_table
-
-```
-
-```{r factstable, results='asis'}
-printable_facts_table <- round(facts_table, digits=2) %>%
-  kbl(booktabs=TRUE, escape=TRUE, caption='User data of contributors on GitHub to letters calling for the removal or support of, Richard M. Stallman, respectively.') %>%
+```{r breakdowntable, results='asis'}
+printable_table <- round(df_tables$breakdown_table, digits=2) %>%
+  kbl(booktabs=TRUE, escape=TRUE, caption='User breakdown of contributors on GitHub to letters calling for the removal or support of, Richard M. Stallman, respectively.') %>%
   kable_styling(latex_options=c('striped'))
 
-print(printable_facts_table)
+print(printable_table)
 ```
 
-```{r}
+<!--
+```{r, eval=FALSE}
 # Format facts table for plotting
 #facts_table_orig <- facts_table
 facts_table$Total <- NULL
@@ -122,9 +121,23 @@ gg <- ggplot(facts_table, aes(x=metric, y=observation)) +
   scale_y_continuous(labels = percent)
 ```
 
-```{r factsbarplot, results='asis'}
+```{r factsbarplot, results='asis', eval=FALSE}
 print(gg)
 ```
+-->
+
+\appendix
+
+# Organizational messages regarding the current events:
+- [CommitChange](https://twitter.com/wwahammy/status/1374771022289854465)
+- [Electronic Frontier Foundation (EFF)](https://www.eff.org/deeplinks/2021/03/statement-re-election-richard-stallman-fsf-board)
+- [Free Software Foundation Europe (FSFE)](https://fsfe.org/news/2021/news-20210324-01.html)
+- [Mozilla](https://twitter.com/mozilla/status/1374513444838199304)
+- [Open Source Initiative (OSI)](https://opensource.org/OSI_Response)
+- [Outreachy](https://www.outreachy.org/blog/2021-03-23/fsf-participation-barred/)
+- [Red Hat](https://www.redhat.com/en/blog/red-hat-statement-about-richard-stallmans-return-free-software-foundation-board)
+- [Software Freedom Conservancy](https://sfconservancy.org/blog/2021/mar/23/outreachy-fsf/)
+- [The Tor Project](https://twitter.com/torproject/status/1374754834050654212)
 
 
 ```{r}
