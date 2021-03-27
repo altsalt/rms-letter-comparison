@@ -5,7 +5,6 @@
 # license: "GPL-3"
 ## --
 
-
 import os
 import time
 import pandas as pd
@@ -15,6 +14,10 @@ np.random.seed(42)
 from github import Github
 from github import GithubException
 from github import RateLimitExceededException
+
+file = open('../last_run', 'w')
+file.write(time.asctime())
+file.close()
 
 token = os.getenv('GITHUB_TOKEN')
 gh = Github(token)
@@ -35,11 +38,16 @@ def log_writer(text, filename):
   file.write(str(text) + '\n')
   file.close()
 
+# perhaps this is worth pursuing.. https://timber.io/blog/decorators-in-python/
+# import functools
 def rate_limiter(call, location):
   while True:
     try:
-      response = call
-      return response
+#      @functools.wraps(call)
+#      def call_as_called():
+#        call
+      response = call()
+      return call_as_called()
     except RateLimitExceededException as e:
       log_writer(location, 'rate')
       log_writer('[' + time.asctime() + '] Rate limit at time of error:', 'rate')
