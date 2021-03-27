@@ -15,7 +15,7 @@ On March 22, 2021 the former president of the Free Software Foundation (FSF) Ric
 
 On March 23, 2021 a letter was published online calling for the removal of rms from all leadership positions within the Free/Libre/Open Source Software community.<sup>[3](#fn3)</sup> Shortly thereafter, a counter letter, in support of the return of rms was published.<sup>[4](#fn4)</sup>
 
-Each of these letters called for readers to add their signatures via a pull request (PR) using GitHub, one of the largest hosts for FLOSS projects. As of 10:00:00 UTC on March 25, 2021, the letter requesting removal has received over 2,000 signatures, while the letter in support of remaining has received just over 1,400.
+Each of these letters called for readers to add their signatures via a pull request (PR) using GitHub, one of the largest hosts for FLOSS projects. As of 15:52:36 PDT on March 26th, 2021, the letter requesting removal has received 1,303 "contributor" signatures, while the letter in support of remaining has received 2,280. The displayed numbers are ~2,700 for removal and ~3,100 for remaining.
 
 Included in this repository is a cursory analysis comparing contributors to each letter. The data used was acquired from GitHub via thier official API, accessed using the PyGithub library.<sup>[5](#fn5)</sup> It was then processed in R, making use of tools from the tidyverse library.<sup>[6](#fn6)</sup>
 
@@ -25,6 +25,9 @@ Included in this repository is a cursory analysis comparing contributors to each
 - <a name="fn4">[4]</a>: https://rms-support-letter.github.io/
 - <a name="fn5">[5]</a>: https://github.com/PyGithub/PyGithub
 - <a name="fn6">[6]</a>: https://www.tidyverse.org/
+
+
+## Appendix
 
 ### Organizational messages regarding the current events:
 - [CommitChange](https://twitter.com/wwahammy/status/1374771022289854465)
@@ -37,7 +40,14 @@ Included in this repository is a cursory analysis comparing contributors to each
 - [Software Freedom Conservancy](https://sfconservancy.org/blog/2021/mar/23/outreachy-fsf/)
 - [The Tor Project](https://twitter.com/torproject/status/1374754834050654212)
 
+### Other people looking into the data:
+- [@aimee_maree](https://twitter.com/aimee_maree/status/1375784037898280960)
+- [@FOSSfirefighter](https://twitter.com/FOSSfirefighter/status/1375652919123542021)
+- [@tmcw](https://observablehq.com/@tmcw/signatures-on-the-pro-rms-open-letter?ui=classic)
+
+
 ## Licensing and Usage Terms
 The documentation provided for this project is released under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0) https://creativecommons.org/licenses/by-sa/4.0/. The code provided for this project is released under the GNU General Public License version 3 (GNU GPLv3) https://www.gnu.org/licenses/gpl-3.0. The data was collected from GitHub. All data provided for this project is subject to the terms outlined on this page: https://docs.github.com/en/github/site-policy/github-terms-of-service
 
 🄯 2021 Wm Salt Hale <@altsalt (.net)>
+
