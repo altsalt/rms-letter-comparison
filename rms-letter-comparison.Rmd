@@ -83,7 +83,7 @@ On March 23, 2021 a letter was published online calling for the removal of rms f
 
 Each of these letters called for readers to add their signatures via a pull request (PR) using GitHub, one of the largest hosts for FLOSS projects. As of `r format(Sys.time(), "%T %Z")` on `r format.date(Sys.time())`, the letter requesting removal has received `r f(df_facts$orig_rr_signers)` signatures, while the letter in support of remaining has received `r f(df_facts$orig_sr_signers)`.
 
-Below is a cursory analysis comparing contributors to each letter. The data used was acquired from GitHub via thier official API, accessed using the PyGithub library.\footnote{\url{https://github.com/PyGithub/PyGithub}} It was then processed in R, making use of tools from the tidyverse library.\footnote{\url{https://www.tidyverse.org/}}
+Below is a cursory analysis comparing contributors to each letter. The data used was acquired from GitHub via their official API, accessed using the PyGithub library.\footnote{\url{https://github.com/PyGithub/PyGithub}} It was then processed in R, making use of tools from the tidyverse library.\footnote{\url{https://www.tidyverse.org/}}
 
 The documentation provided for this project is released under a Creative Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0) https://creativecommons.org/licenses/by-sa/4.0/. The code provided for this project is released under the GNU General Public License version 3 (GNU GPLv3) https://www.gnu.org/licenses/gpl-3.0. The data was collected from GitHub. All data provided for this project is subject to the terms outlined on this page: https://docs.github.com/en/github/site-policy/github-terms-of-service
 
