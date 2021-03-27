@@ -13,6 +13,7 @@ import numpy as np
 np.random.seed(42)
 
 from github import Github
+from github import GithubException
 from github import RateLimitExceededException
 
 token = os.getenv('GITHUB_TOKEN')
@@ -35,18 +36,25 @@ def log_writer(text, filename):
   file.close()
 
 def rate_limiter(call, location):
-  successful_call = False
-  while not successful_call:
+  while True:
     try:
       response = call
-      successful_call = True
+      return response
     except RateLimitExceededException as e:
       log_writer(location, 'rate')
       log_writer('[' + time.asctime() + '] Rate limit at time of error:', 'rate')
       log_writer(gh.get_rate_limit().core, 'rate')
       log_writer('---', 'rate')
       time.sleep(10)
-      continue
+    except GithubException as e:
+      print('[' + time.asctime() + '] An unhandled GH error occurred:')
+      print(e)
+      print('---')
+      log_writer(location, 'error')
+      log_writer('An unhandled error occurred:', 'error')
+      log_writer(e, 'error')
+      log_writer('---', 'error')
+      time.sleep(10)
     except Exception as e:
       print('[' + time.asctime() + '] An unhandled error occurred:')
       print(e)
@@ -55,40 +63,55 @@ def rate_limiter(call, location):
       log_writer('An unhandled error occurred:', 'error')
       log_writer(e, 'error')
       log_writer('---', 'error')
-      continue
-  return(response)
+      time.sleep(10)
+    except:
+      print('[' + time.asctime() + '] A really nasty unhandled error occurred:')
+      print(e)
+      print('---')
+      log_writer(location, 'error')
+      log_writer('A really nasty unhandled error occurred:', 'error')
+      log_writer(e, 'error')
+      log_writer('---', 'error')
+      time.sleep(10)
+  return 0
 
 def get_user_info(user, repo):
-  utype = user.type
+  uname = rate_limiter(user.name, '(get user name)')
+  uemail = rate_limiter(user.email, '(get user email)')
+  utype = rate_limiter(user.type, '(get user type)')
   if(utype == 'Anonymous'):
-    if(user.email != ''):
-      queried_users = rate_limiter(gh.search_users(user.email), '(email check)')
-    elif(user.name != ''):
-      queried_users = rate_limiter(gh.search_users(user.name + ' in:name'), '(name check)')
-    else:
-      queried_users = None
+    queried_users = None
+    qucount = 0
+    if(uemail != ''):
+      queried_users = rate_limiter(gh.search_users(uemail + '+in:email', type='user'), '(email check)')
+#      qucount = rate_limiter(queried_users.totalCount, '(user count)')
+      qucount = len(rate_limiter(queried_users.get_page(0), '(user count)'))
+      if((qucount == 0) and ((uname != ''))):
+        queried_users = rate_limiter(gh.search_users(uname + '+in:name', type='user'), '(name check)')
+#        qucount = rate_limiter(queried_users.totalCount, '(user count)')
+        qucount = len(rate_limiter(queried_users.get_page(0), '(user count)'))
+    elif(uname != ''):
+      queried_users = rate_limiter(gh.search_users(uname + '+in:name', type='user'), '(name check)')
+#      qucount = rate_limiter(queried_users.totalCount, '(user count)')
+      qucount = len(rate_limiter(queried_users.get_page(0), '(user count)'))
       
-    if(queried_users == None):
+    if((queried_users == None) or (qucount == 0)):
       utype = 'Anonymous'
+    elif(qucount > 1):
+      utype = 'Multiple'
     else:
-      qucount = rate_limiter(queried_users.totalCount, '(user count)')
-      if(qucount == 0):
-        utype = 'Anonymous'
-      elif(qucount > 1):
-        utype = 'Multiple'
-      else:
-        user = rate_limiter(queried_users.get_page(0)[0], '(get individual user)')
-        utype = 'Queried'
-        
+      user = rate_limiter(queried_users.get_page(0)[0], '(get individual user)')
+      utype = 'Queried'
+      
   if((utype == 'Anonymous') or (utype == 'Multiple')):
-    info = {
+    info = rate_limiter({
       'ID': None,
       'NodeID': None,
       'Username': None,
-      'Name': user.name,
+      'Name': uname,
       'Avatar': None,
       'Bio': None,
-      'Email': user.email,
+      'Email': uemail,
       'Location': None,
       'Blog': None,
       'Company': None,
@@ -128,16 +151,16 @@ def get_user_info(user, repo):
       'ReceivedEventsURL': None,
       'SubscriptionsURL': None,
       'Repo': repo
-    }
+    }, '(store anonymous user)')
   else:
-    info = {
+    info = rate_limiter({
       'ID': user.id,
       'NodeID': user.node_id,
       'Username': user.login,
-      'Name': user.name,
+      'Name': uname,
       'Avatar': user.avatar_url,
       'Bio': user.bio,
-      'Email': user.email,
+      'Email': uemail,
       'Location': user.location,
       'Blog': user.blog,
       'Company': user.company,
@@ -177,7 +200,7 @@ def get_user_info(user, repo):
       'ReceivedEventsURL': user.received_events_url,
       'SubscriptionsURL': user.subscriptions_url,
       'Repo': repo
-    }
+    }, '(store identified user)')
   return(info)
 
 
