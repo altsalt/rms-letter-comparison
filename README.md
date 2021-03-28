@@ -17,7 +17,7 @@ On March 23, 2021 a letter was published online calling for the removal of rms f
 
 Each of these letters called for readers to add their signatures via a pull request (PR) using GitHub, one of the largest hosts for FLOSS projects. As of 15:52:36 PDT on March 26th, 2021, the letter requesting removal has received 1,303 "contributor" signatures, while the letter in support of remaining has received 2,280. The displayed numbers are ~2,700 for removal and ~3,100 for remaining.
 
-Included in this repository is a cursory analysis comparing contributors to each letter. The data used was acquired from GitHub via thier official API, accessed using the PyGithub library.<sup>[5](#fn5)</sup> It was then processed in R, making use of tools from the tidyverse library.<sup>[6](#fn6)</sup>
+Included in this repository is a cursory analysis comparing contributors to each letter. The data used was acquired from GitHub via their official API, accessed using the PyGithub library.<sup>[5](#fn5)</sup> It was then processed in R, making use of tools from the tidyverse library.<sup>[6](#fn6)</sup>
 
 - <a name="fn1">[1]</a>: https://twitter.com/nixcraft/status/1373905399707955202
 - <a name="fn2">[2]</a>: https://itsfoss.com/richard-stallman-controversy
